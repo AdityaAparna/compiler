@@ -65,13 +65,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="code_gen.c" />
-    <ClCompile Include="lex.c" />
-    <ClCompile Include="main.c" />
-    <ClCompile Include="names.c" />
+    <ClCompile Include="code_gen.cpp" />
+    <ClCompile Include="lex.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="names.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="code_gen.h" />
     <ClInclude Include="lex.h" />
+    <ClInclude Include="names.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="testProgram.x" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

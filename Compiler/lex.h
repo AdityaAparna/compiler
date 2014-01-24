@@ -22,4 +22,6 @@
 
 extern char *yytext;		/* in lex.c	*/
 extern int yyleng;
-extern yylineno;
+extern int yylineno;
+int match(int token);
+void advance();

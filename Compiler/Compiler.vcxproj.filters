@@ -15,16 +15,16 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="lex.c">
+    <ClCompile Include="code_gen.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="main.c">
+    <ClCompile Include="lex.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="names.c">
+    <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="code_gen.c">
+    <ClCompile Include="names.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -32,5 +32,14 @@
     <ClInclude Include="lex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="code_gen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="names.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="testProgram.x" />
   </ItemGroup>
 </Project>
