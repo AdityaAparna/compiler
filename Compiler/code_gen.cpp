@@ -1,10 +1,14 @@
-#include <stdio.h>
-#include "lex.h"
-#include <iostream>
 #include "code_gen.h"
-
+#include <iostream>
 using namespace std;
+#define PR(X) cout<< #X <<" = "<<X<<endl;
+#define DBG 1
 
+map<string, string> idregassign;
+
+map<string, bool> idDef;
+string datasec = "";
+string codesec = "";
 void stmt_list()
 {
     /*
@@ -30,6 +34,8 @@ void stmt()
 
     if (match(ID))
     {
+		string idname(yytext, yytext + yyleng);
+	//	idassignmap[idname] = 
         advance();
         if(match(ASSIGN)){
             advance();
@@ -104,88 +110,131 @@ void stmt()
     }    
 }
 
-char    *expr()
+string expr()
 {
     /* expr -> equality expr'
      * expr' -> EQ equality expr' |  epsilon
      */
 
-    char  *tempvar=NULL, *tempvar2;
+    string tempvar1, tempvar2;
 
-    equality();
+    tempvar1 = equality();
 
     while(match(EQ)){
         advance();
-        equality();
+        tempvar2=  equality();
+		string regNew = newreg();
+		cout << regNew << "= comparision " << tempvar1 << "==" << tempvar2 << endl;
+		freereg(tempvar1);
+		freereg(tempvar2);
+		tempvar1 = regNew;
     }
     
 
-    return tempvar;
+    return tempvar1;
 }
 
-char *equality()
+string equality()
 {
     /*
     * equality -> cmp equality'
     * equality'-> LESS cmp equality' | GREATER cmp equality' | epsilon
     */
-    char *tempvar = NULL
+	string tempvar1, tempvar2;
 ;
-    cmp();
-
-    while(match(LESS) || match(GREATER)){
+    tempvar1 = cmp();
+	int less = match(LESS);
+	int greater = match(GREATER);
+    while(less || greater){
         advance();
-        cmp();
+        tempvar2 = cmp();
+		string regNew = newreg();
+		if (less){
+			cout << regNew << " = result of " << tempvar1 << "<" << tempvar2 << endl;
+		}
+		else{
+			cout << regNew << " = result of " << tempvar1 << ">" << tempvar2 << endl;
+		}
+
+		less = match(LESS);
+		greater = match(GREATER);
     }
 
-    return tempvar;
+    return tempvar1;
     
 }
 
-char *cmp()
+string cmp()
 {
     /*
     * cmp -> term cmp'
     * cmp'-> PLUS term cmp' | MINUS term cmp' | epsilon
     */
-    char *tempvar = NULL;
-    term();
-
-    while(match(PLUS) || match(MINUS)){
+    string tempvar1,tempvar2;
+    tempvar1 = term();
+	int plus = match(PLUS); int minus = match(MINUS);
+    while(plus || minus){
         advance();
-        term();
+        tempvar2 = term();
+		string regNew = newreg();
+		if (match(PLUS)){
+			cout << regNew << " =" << tempvar1 << "+" << tempvar2 << endl;
+		}
+		else{
+			cout << regNew << " =" << tempvar1 << "-" << tempvar2 << endl;
+		}
+		freereg(tempvar1);
+		freereg(tempvar2);
+		tempvar1 = regNew;
+
+		plus = match(PLUS); 
+		minus = match(MINUS);
     }
     
-    return tempvar;
+    return tempvar1;
     
 }
 
-char    *term()
+string term()
 {
     /*
     * term -> factor term'
     * term'-> MUL factor term' | DIV factor term' | epsilon
     */
 
-    char  *tempvar = NULL, *tempvar2 ;
-
-    tempvar = factor();
-    while( match( MUL ) || match(DIV) )
+    string tempvar1, tempvar2 ;
+	tempvar1 = factor();
+	int mul = match(MUL);
+	int div = match(DIV);
+    while( mul || div )
     {
         advance();
-        factor();
+        tempvar2 = factor();
+		string regNew = newreg();
+		if (match(MUL)){
+			cout << regNew << " =" << tempvar1 << "*" << tempvar2 << endl;
+		}
+		else{
+			cout << regNew << " =" << tempvar1 << "/" << tempvar2 << endl;
+		}
+		freereg(tempvar1);
+		freereg(tempvar2);
+		tempvar1 = regNew;
+
+		mul = match(MUL);
+		div = match(DIV);
     }
 
-    return tempvar;
+    return tempvar1;
 }
 
-char    *factor()
+string factor()
 {
     /*
     * factor -> NUM | ID | LP expr RP
     */
     
-    char *tempvar = NULL;
+    string tempvar = "";
 
     if( match(NUM) || match(ID) )
     {
@@ -197,21 +246,51 @@ char    *factor()
 	 * to print the string. The ".*" tells printf() to take the maximum-
 	 * number-of-characters count from the next argument (yyleng).
 	 */
+		if (match(NUM)){
+			string tok = getCurrentToken();
+			
+			string regi = newreg(tok);
+			
+			cout << regi << " = " << tok << endl;
+			advance();
+			return regi;
+		}
+		else{
+			// match(ID) case
+			string curId = getCurrentToken();
 
-        // printf("    %s = %0.*s\n", tempvar = newname(), yyleng, yytext );
-        advance();
+			if (idDef.find(curId) == idDef.end()){
+				idDef[curId] = true;
+				// Add to datasec about curId declaration
+			}
+
+			if (idregassign.find(curId) != idregassign.end()){
+				advance();
+				return idregassign[curId];
+			}
+			else{
+				string reg = newreg();
+				idregassign[curId] = reg;
+				advance();
+				return reg;
+			}
+		}
+
     }
     else if( match(LP) )
     {
         advance();
         tempvar = expr();
-        if( match(RP) )
-            advance();
+		if (match(RP))
+		{
+			advance();
+			return tempvar;
+		}
         else
             fprintf(stderr, "%d: Mismatched parenthesis\n", yylineno );
     }
     else
-	fprintf( stderr, "%d: Number or identifier expected\n", yylineno );
+		fprintf( stderr, "%d: Number or identifier expected\n", yylineno );
 
     return tempvar;
 }

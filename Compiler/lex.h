@@ -1,3 +1,7 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <iostream>
+using namespace std;
 #define EOI				0	/* End of input			*/
 #define SEMI			1	/* ; 					*/
 #define PLUS 			2	/* + 					*/
@@ -25,3 +29,4 @@ extern int yyleng;
 extern int yylineno;
 int match(int token);
 void advance();
+string getCurrentToken();

@@ -1,28 +1,38 @@
-#include "lex.h"
-#include <stdio.h>
-#include <iostream>
-
+#include "names.h"
 using namespace std;
 
-char  *Names[] = { "t0", "t1", "t2", "t3", "t4", "t5", "t6", "t7" };
-char  **Namep = Names;
-
-char  *newname()
-{
-	if (Namep >= &Names[sizeof(Names) / sizeof(*Names)])
+vector<string> registerNames = { "r1" , "r2", "r3" , "r4" , "r4" , "r5" , "r6" , "r7" , "r8" };
+map <string, bool> reginuse;
+map<string, string> regidassign;
+void initializeRegisterMap(){
+	for (int i = 0; i < registerNames.size(); i++)
 	{
-		fprintf(stderr, "%d: Expression too complex\n", yylineno);
-		exit(1);
+		reginuse[registerNames[i]] = false;
 	}
+}
+string newreg(string curId ){
+	string res;
+	for (int i = 0; i < registerNames.size(); i++)
+	{
+		if (reginuse[registerNames[i]] == false){
+			reginuse[registerNames[i]] = true;
 
-	return(*Namep++);
+			if (curId != "")
+				regidassign[registerNames[i]] = curId;
+			return registerNames[i];
+		}
+	}
+	
+	//exit(EXIT_FAILURE);
 }
 
-void freename(char *s)
-{
-	if (Namep > Names)
-		*--Namep = s;
-	else
-		fprintf(stderr, "%d: (Internal error) Name stack underflow\n",
-		yylineno);
+void freereg(string regName){
+	if (reginuse.find(regName) == reginuse.end()){
+
+		cout << "Trying to free an unknown register named --" << regName << endl;
+	}
+	else{
+		reginuse[regName] = false;
+		regidassign[regName] = "";
+	}
 }

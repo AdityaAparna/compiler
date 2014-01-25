@@ -1,8 +1,4 @@
 #include "lex.h"
-#include <stdio.h>
-#include <ctype.h>
-#include <iostream>
-
 using namespace std;
 
 
@@ -147,4 +143,8 @@ void clearThisLine(void){
 	Lookahead = -1; 
 	*yytext = '\0';
 	yyleng = 0;
+}
+
+string getCurrentToken(){
+	return string(yytext, yytext + yyleng);
 }
