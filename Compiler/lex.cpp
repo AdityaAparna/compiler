@@ -92,8 +92,11 @@ int lex(void){
         case '>':
           return GREATER;
         case '=':
-          if((current+1) <= &input_buffer[1023] && *(current+1) == '=')
-            return EQ;
+			if ((current + 1) <= &input_buffer[1023] && *(current + 1) == '=')
+			{
+				yyleng = 2;
+				return EQ;
+			}
           else
             return ASSIGN;
         case '\n':

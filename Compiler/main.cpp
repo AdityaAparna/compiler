@@ -9,5 +9,5 @@ int main ()
 {	
 	initializeRegisterMap();
 	stmt_list ();
-	return 0;
+	return !error;
 }
