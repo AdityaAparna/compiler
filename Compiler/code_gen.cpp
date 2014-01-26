@@ -177,7 +177,7 @@ string cmp()
         advance();
         tempvar2 = term();
 		string regNew = newreg();
-		if (match(PLUS)){
+		if (plus){
 			cout << regNew << " =" << tempvar1 << "+" << tempvar2 << endl;
 		}
 		else{
@@ -211,7 +211,7 @@ string term()
         advance();
         tempvar2 = factor();
 		string regNew = newreg();
-		if (match(MUL)){
+		if (mul){
 			cout << regNew << " =" << tempvar1 << "*" << tempvar2 << endl;
 		}
 		else{
@@ -249,7 +249,7 @@ string factor()
 		if (match(NUM)){
 			string tok = getCurrentToken();
 			
-			string regi = newreg(tok);
+			string regi = newreg();
 			
 			cout << regi << " = " << tok << endl;
 			advance();
@@ -269,7 +269,7 @@ string factor()
 				return idregassign[curId];
 			}
 			else{
-				string reg = newreg();
+				string reg = newreg(curId);
 				idregassign[curId] = reg;
 				advance();
 				return reg;
