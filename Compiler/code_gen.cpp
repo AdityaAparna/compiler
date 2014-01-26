@@ -64,9 +64,10 @@ void stmt()
         advance();
         expr();
         if(match(THEN)){
+			int hereIndex = labelIndex;
             advance();
             stmt();
-			codesec << "\n" << retLabel() << ":" << endl;
+			codesec << "\n" << "Label" << hereIndex-1 << ":" << endl;
         }else{
             fprintf(stderr, " Missing THEN at line no. %d\n",yylineno);
         }

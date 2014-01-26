@@ -1,7 +1,5 @@
 #include "label.h"
-
-static int labelIndex = 1;
-
+int labelIndex = 1;
 string genLabel()
 {
 	stringstream temp;

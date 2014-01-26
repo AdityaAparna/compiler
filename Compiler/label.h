@@ -4,3 +4,5 @@ using namespace std;
 
 string genLabel();
 string retLabel();
+
+extern int labelIndex ;
