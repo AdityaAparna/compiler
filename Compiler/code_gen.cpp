@@ -6,7 +6,7 @@ using namespace std;
 #define PR(X) cout<< #X <<" = "<<X<<endl;
 #define DBG 1
 map<string, bool> idDef;
-string datasec = ".DATA \n";
+string datasec = "\n";
 stringstream codesec;
 
 void stmt_list()
@@ -65,7 +65,7 @@ void stmt()
     else if(match(IF))
     {
         advance();
-        expr();
+		freereg(expr());
         if(match(THEN)){
 			int hereIndex = labelIndex-1;
             advance();
@@ -82,7 +82,8 @@ void stmt()
 		genLabel();
 		int hereIndex = labelIndex - 1;
 		codesec << "\n" << "Label" << hereIndex  << ":" << endl;
-        expr();
+        freereg(expr());
+		
         if(match(DO)){
             advance();
             stmt();
@@ -139,8 +140,7 @@ string expr()
 
     while(match(EQ)){
         advance();
-        tempvar2 = equality();
-		string regNew = newreg();
+		tempvar2 = equality();
 		//codesec << regNew << "= comparision " << tempvar1 << "==" << tempvar2 << endl;
 		codesec << "CMP " << tempvar1 << " , " << tempvar2 << endl;
 		if (flag)
@@ -170,7 +170,7 @@ string equality()
     while(less || greater){
         advance();
         tempvar2 = cmp();
-		string regNew = newreg();
+		
 		if (less){
 			//codesec << regNew << " = result of " << tempvar1 << "<" << tempvar2 << endl;
 			codesec << "CMP " << tempvar1 << " , " << tempvar2 << endl;
@@ -259,21 +259,16 @@ string term()
     {
         advance();
         tempvar2 = factor();
-		//string regNew = newreg();
 		if (mul){
-			//codesec << regNew << " =" << tempvar1 << "*" << tempvar2 << endl;
 			codesec << "MUL " << tempvar1 << " , " << tempvar2 << endl;
 		}
 		else{
-			//codesec << regNew << " =" << tempvar1 << "/" << tempvar2 << endl;
 			codesec << "MOV ax , " << tempvar1 << endl;
 			codesec << "MOV dx , " << "0" << endl;
 			codesec << "DIV " << tempvar2 << endl;
 			codesec << "MOV " << tempvar1 << " , " << "ax" << endl;
 		}
-		//freereg(tempvar1);
 		freereg(tempvar2);
-		//tempvar1 = regNew;
 
 		mul = match(MUL);
 		div = match(DIV);

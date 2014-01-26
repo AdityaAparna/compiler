@@ -9,7 +9,7 @@ map <string, bool> reginuse;
 
 void initializeRegisterMap(){
 
-	char temp[9][4] = { "r8", "r9", "r10", "r11", "r12", "r13", "r14", "r15", "r16" };
+	char temp[9][4] = { "bx", "cx" };// , "r10", "r11", "r12", "r13", "r14", "r15", "r16"};
 	for (int i = 0; i < 9; i++)
 	{
 		registerNames.push_back(temp[i]);
