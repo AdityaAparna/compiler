@@ -187,18 +187,18 @@ string equality()
 				{}
 			*/
 			if (flag)
-				codesec << "JNS "<<genLabel() << endl; 
+				codesec << "JA "<<genLabel() << endl; 
 			else
-				codesec << "JNS " << retLabel() << endl;
+				codesec << "JA " << retLabel() << endl;
 
 		}
 		else{
 			//codesec << regNew << " = result of " << tempvar1 << ">" << tempvar2 << endl;
 			codesec << "CMP " << tempvar1 << " , " << tempvar2 << endl;
 			if (flag)
-				codesec << "JS " << genLabel() << endl;
+				codesec << "JNA " << genLabel() << endl;
 			else
-				codesec << "JS " << retLabel() << endl;
+				codesec << "JNA " << retLabel() << endl;
 		}
 		freereg(tempvar1);
 		tempvar1 = tempvar2;

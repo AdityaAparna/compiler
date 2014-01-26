@@ -1,10 +1,13 @@
 sum = 20;
-n = 5;
-if(n==(5)) then
-	if(sum>0) then
-		while n>0 do
-			begin
-				n=n-2;
-				sum=(sum-2)/2;
-			end
+n = 4;
 
+while n>0 do
+	begin
+		while sum>0 do
+			begin
+				sum=n/2;
+				n=n-1;
+			end
+		if(sum>0) then
+			n=n-1;
+	end
