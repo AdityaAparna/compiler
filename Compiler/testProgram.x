@@ -1,9 +1,8 @@
 a = 4;
-d = a*3;
-b = a/2;
 
-if a<5 then
-begin
-a=5+10;
-b = 0;
-end
+if 3<5 then
+	if a<1 then
+	begin
+		a=5;
+	end
+a=3;

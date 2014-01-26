@@ -66,12 +66,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="code_gen.cpp" />
+    <ClCompile Include="label.cpp" />
     <ClCompile Include="lex.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="names.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code_gen.h" />
+    <ClInclude Include="label.h" />
     <ClInclude Include="lex.h" />
     <ClInclude Include="names.h" />
   </ItemGroup>

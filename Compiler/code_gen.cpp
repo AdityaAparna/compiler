@@ -1,4 +1,5 @@
 #include "code_gen.h"
+#include "label.h"
 #include <iostream>
 #include <sstream>
 using namespace std;
@@ -65,6 +66,7 @@ void stmt()
         if(match(THEN)){
             advance();
             stmt();
+			codesec << "\n" << retLabel() << ":" << endl;
         }else{
             fprintf(stderr, " Missing THEN at line no. %d\n",yylineno);
         }
@@ -118,20 +120,23 @@ string expr()
      */
 
     string tempvar1, tempvar2;
-
+	bool flag = true;
     tempvar1 = equality();
 
     while(match(EQ)){
         advance();
-        tempvar2=  equality();
+        tempvar2 = equality();
 		string regNew = newreg();
-		codesec << regNew << "= comparision " << tempvar1 << "==" << tempvar2 << endl;
+		//codesec << regNew << "= comparision " << tempvar1 << "==" << tempvar2 << endl;
+		codesec << "CMP " << tempvar1 << " , " << tempvar2 << endl;
+		if (flag)
+			codesec << "JNZ " << genLabel() << endl;
+		else
+			codesec << "JNZ " << retLabel() << endl;
 		
 		freereg(tempvar1);
-		freereg(tempvar2);
-		tempvar1 = regNew;
+		tempvar1 = tempvar2;
     }
-    
 
     return tempvar1;
 }
@@ -143,7 +148,8 @@ string equality()
     * equality'-> LESS cmp equality' | GREATER cmp equality' | epsilon
     */
 	string tempvar1, tempvar2;
-;
+	bool flag = true;
+
     tempvar1 = cmp();
 	int less = match(LESS);
 	int greater = match(GREATER);
@@ -152,16 +158,41 @@ string equality()
         tempvar2 = cmp();
 		string regNew = newreg();
 		if (less){
-			codesec << regNew << " = result of " << tempvar1 << "<" << tempvar2 << endl;
+			//codesec << regNew << " = result of " << tempvar1 << "<" << tempvar2 << endl;
+			codesec << "CMP " << tempvar1 << " , " << tempvar2 << endl;
+			/*
+				mov var,4
+				cmp var,3
+
+				JNS FURTHER
+
+        
+				FURTHER:
+
+				if(var<3)
+				{}
+			*/
+			if (flag)
+				codesec << "JNS "<<genLabel() << endl; 
+			else
+				codesec << "JNS " << retLabel() << endl;
+
 		}
 		else{
-			codesec << regNew << " = result of " << tempvar1 << ">" << tempvar2 << endl;
+			//codesec << regNew << " = result of " << tempvar1 << ">" << tempvar2 << endl;
+			codesec << "CMP " << tempvar1 << " , " << tempvar2 << endl;
+			if (flag)
+				codesec << "JS " << genLabel() << endl;
+			else
+				codesec << "JS " << retLabel() << endl;
 		}
-
+		freereg(tempvar1);
+		tempvar1 = tempvar2;
+		flag = false;
 		less = match(LESS);
 		greater = match(GREATER);
     }
-
+	
     return tempvar1;
     
 }
