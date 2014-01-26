@@ -1,6 +1,7 @@
-#include <stdio.h>
-#include <ctype.h>
+#include <cstdio>
+#include <cctype>
 #include <iostream>
+#include <cstring>
 using namespace std;
 #define EOI				0	/* End of input			*/
 #define SEMI			1	/* ; 					*/

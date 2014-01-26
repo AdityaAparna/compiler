@@ -1,14 +1,18 @@
 #include "names.h"
 #include "code_gen.h"
+#include "cstdlib"
 using namespace std;
 
-vector<string> registerNames = { "r8" , "r9", "r10" , "r11" , "r12" , "r13" , "r14" , "r15" , "r16" };
+vector<string> registerNames;
 map <string, bool> reginuse;
 
 
 void initializeRegisterMap(){
-	for (int i = 0; i < registerNames.size(); i++)
+
+	char temp[9][4] = { "r8", "r9", "r10", "r11", "r12", "r13", "r14", "r15", "r16" };
+	for (int i = 0; i < 9; i++)
 	{
+		registerNames.push_back(temp[i]);
 		reginuse[registerNames[i]] = false;
 	}
 }

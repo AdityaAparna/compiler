@@ -1,5 +1,5 @@
 #include "code_gen.h"
-#include <stdio.h>
+#include <cstdio>
 #include <iostream>
 using namespace std;
 bool error = false;
