@@ -1,8 +1,4 @@
-if 3<5 then
-begin
-	b = 6;
-	if a<1 then
-		a=5;
-	c = 4;
-end
-	
+while 2<3 do
+	if (3<4) then
+		a=2;
+a=3;

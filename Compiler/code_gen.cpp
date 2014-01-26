@@ -64,10 +64,10 @@ void stmt()
         advance();
         expr();
         if(match(THEN)){
-			int hereIndex = labelIndex;
+			int hereIndex = labelIndex-1;
             advance();
             stmt();
-			codesec << "\n" << "Label" << hereIndex-1 << ":" << endl;
+			codesec << "\n" << "Label" << hereIndex << ":" << endl;
         }else{
             fprintf(stderr, " Missing THEN at line no. %d\n",yylineno);
         }
@@ -75,10 +75,16 @@ void stmt()
     else if(match(WHILE))
     {
         advance();
+		genLabel();
+		int hereIndex = labelIndex - 1;
+		codesec << "\n" << "Label" << hereIndex  << ":" << endl;
         expr();
         if(match(DO)){
             advance();
             stmt();
+			codesec << "JMP Label" << hereIndex << endl;
+			codesec << "\n" << "Label" << hereIndex + 1 << ":" << endl;
+
         }else{
             fprintf(stderr, " Missing DO at line no %d\n",yylineno);
         }
