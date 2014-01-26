@@ -1,7 +1,6 @@
 #include "lex.h"
+#include "code_gen.h"
 using namespace std;
-
-
 
 char* yytext = ""; /* Lexeme (not '\0'
                       terminated)              */
@@ -36,7 +35,8 @@ int forwardParse()
   {
     if(!isdigit(lexeme[i]))
     {
-      printf("%s at line no:%d is not a valid identifier\n",lexeme, yylineno );
+      fprintf(stderr, "%s at line no:%d is not a valid identifier\n",lexeme, yylineno );
+	  error = true;
       return ERR;
     }
   }
@@ -102,8 +102,11 @@ int lex(void){
           break;
 // NUM, ID, IF, THEN, WHILE, DO, BEGIN, END remaining
         default:
-          if(!isalnum(*current) && (*current)!='_')
-            fprintf(stderr, "Agvonse la8emevn eisagwgn <%c>\n", *current);
+			if (!isalnum(*current) && (*current) != '_')
+			{
+				fprintf(stderr, "Illegal character <%c> at line no.%d \n", *current, yyleng);
+				error = true;
+			}
           else{
             while(isalnum(*current) || (*current)=='_')
               ++current;

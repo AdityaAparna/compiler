@@ -8,6 +8,7 @@ using namespace std;
 map<string, bool> idDef;
 string datasec = ".DATA \n";
 stringstream codesec;
+
 void stmt_list()
 {
     /*
@@ -20,15 +21,16 @@ void stmt_list()
         stmt();
 		//setLookaheadfalse();
     }
-	cout << datasec << endl;
-	cout << codesec.str() << endl;
+	if (!error)
+	{
+		cout << datasec << endl;
+		cout << codesec.str() << endl;
+	}
 }
 
 void stmt()
 {
     /*  stmt -> ID ASSIGN expr SEMI | IF expr THEN stmt_list | WHILE expr DO stmt_list | BEGIN stmt_list END | expr SEMI */
-
-    char *tempvar;
 
     if( !legal_lookahead( NUM, ID, IF, WHILE, BEGIN, LP, 0 ) )
         return;
@@ -46,17 +48,18 @@ void stmt()
             advance();
 			string tempreg = expr();
 			//codesec << idname << "=" << tempreg << endl;
-			codesec << "mov " << idname << "," << tempreg << endl;
+			codesec << "MOV " << idname << "," << tempreg << endl;
 			freereg(tempreg);
             if(!match(SEMI)){
-                fprintf(stderr, "Missing Semicolon at line no. %d\n",yylineno);
+                fprintf(stderr, "Missing Semicolon at line no.%d\n",yylineno);
+				error = true;
 			}
 			else{
 				advance();
 			}
         }else{
-            fprintf(stderr, " Missing Assignment Operator at line no. %d\n",yylineno);
-			
+            fprintf(stderr, "Missing Assignment Operator at line no.%d\n",yylineno);
+			error = true;
         }
     }
     else if(match(IF))
@@ -69,7 +72,8 @@ void stmt()
             stmt();
 			codesec << "\n" << "Label" << hereIndex << ":" << endl;
         }else{
-            fprintf(stderr, " Missing THEN at line no. %d\n",yylineno);
+            fprintf(stderr, "Missing THEN at line no.%d\n",yylineno);
+			error = true;
         }
     }
     else if(match(WHILE))
@@ -86,7 +90,8 @@ void stmt()
 			codesec << "\n" << "Label" << hereIndex + 1 << ":" << endl;
 
         }else{
-            fprintf(stderr, " Missing DO at line no %d\n",yylineno);
+            fprintf(stderr, "Missing DO at line no.%d\n",yylineno);
+			error = true;
         }
     }
     else if(match(BEGIN))
@@ -101,7 +106,8 @@ void stmt()
 			}
 			if (match(EOI))
 			{
-				fprintf(stderr, " Missing END at line no %d\n", yylineno);
+				fprintf(stderr, "Missing END at line no.%d\n", yylineno);
+				error = true;
 				break;
 			}
 			stmt();
@@ -112,7 +118,8 @@ void stmt()
     {
         expr();
         if(!match(SEMI)){
-            fprintf(stderr, "Missing Semicolon at line no. %d\n", yylineno);
+            fprintf(stderr, "Missing Semicolon at line no.%d\n", yylineno);
+			error = true;
 		}
 		else{
 			advance();
@@ -219,10 +226,10 @@ string cmp()
 		//string regNew = newreg();
 		if (plus){
 			//codesec << regNew << " =" << tempvar1 << "+" << tempvar2 << endl;
-			codesec << "add " << tempvar1 << "," << tempvar2 << endl;
+			codesec << "ADD " << tempvar1 << " , " << tempvar2 << endl;
 		}
 		else{
-			codesec << "sub " << tempvar1 << "," << tempvar2 << endl;
+			codesec << "SUB " << tempvar1 << " , " << tempvar2 << endl;
 			//codesec << regNew << " =" << tempvar1 << "-" << tempvar2 << endl;
 		}
 		//freereg(tempvar1);
@@ -255,14 +262,14 @@ string term()
 		//string regNew = newreg();
 		if (mul){
 			//codesec << regNew << " =" << tempvar1 << "*" << tempvar2 << endl;
-			codesec << "mul " << tempvar1 << "," << tempvar2 << endl;
+			codesec << "MUL " << tempvar1 << " , " << tempvar2 << endl;
 		}
 		else{
 			//codesec << regNew << " =" << tempvar1 << "/" << tempvar2 << endl;
-			codesec << "mov ax," << tempvar1 << endl;
-			codesec << "mov dx," << 0 << endl;
-			codesec << "div " << tempvar2 << endl;
-			codesec << "mov " << tempvar1 << "," << "ax" << endl;
+			codesec << "MOV ax , " << tempvar1 << endl;
+			codesec << "MOV dx , " << "0" << endl;
+			codesec << "DIV " << tempvar2 << endl;
+			codesec << "MOV " << tempvar1 << " , " << "ax" << endl;
 		}
 		//freereg(tempvar1);
 		freereg(tempvar2);
@@ -298,7 +305,7 @@ string factor()
 			string regi = newreg();
 			
 			//codesec << regi << " = " << tok << endl;
-			codesec << "mov " << regi << "," << tok << endl;
+			codesec << "MOV " << regi << " , " << tok << endl;
 			advance();
 			return regi;
 		}
@@ -316,7 +323,7 @@ string factor()
 
 			string reg = newreg();
 			//codesec << reg << "=" << curId << endl;
-			codesec << "mov " << reg << "," << curId << endl;
+			codesec << "MOV " << reg << " , " << curId << endl;
 			advance();
 			return reg;
 			
@@ -332,11 +339,18 @@ string factor()
 			advance();
 			return tempvar;
 		}
-        else
-            fprintf(stderr, "%d: Mismatched parenthesis\n", yylineno );
+		else
+		{
+			fprintf(stderr, "Mismatched parenthesis at line no.%d\n", yylineno);
+			error = true;
+		}
+            
     }
-    else
-		fprintf( stderr, "%d: Number or identifier expected\n", yylineno );
+	else
+	{
+		fprintf(stderr, "Number or identifier expected at line no.%d\n", yylineno);
+		error = true;
+	}
 
     return tempvar;
 }
@@ -389,8 +403,8 @@ int legal_lookahead(int  first_arg ,...)
 
         if( !error_printed )
         {
-        fprintf( stderr, "Line %d: Syntax error\n", yylineno );
-        error_printed = 1;
+			fprintf( stderr, "Syntax error at line no.%d\n", yylineno );
+			error = true; error_printed = 1;
         }
 
         advance();
@@ -401,7 +415,8 @@ exit:
     va_end( args );
 	if (error_printed != 1 && rval == 0)
 	{
-		fprintf(stderr, "Line %d: Syntax error\n", yylineno);
+		fprintf(stderr, "Syntax error at line no.%d\n", yylineno);
+		error = true;
 		advance();
 	}
     return rval;

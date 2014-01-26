@@ -2,10 +2,10 @@
 #include <stdio.h>
 #include <iostream>
 using namespace std;
+bool error = false;
 
 int main ()
 {	
 	stmt_list ();
-	int i;
 	return 0;
 }

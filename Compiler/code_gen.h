@@ -13,6 +13,7 @@ string  term(void);
 string  expr(void);
 string  equality(void);
 string  cmp(void);
+extern bool error;
 
 extern char *newname(void);
 extern void freename(char *name);
