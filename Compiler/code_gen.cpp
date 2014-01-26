@@ -1,14 +1,12 @@
 #include "code_gen.h"
 #include <iostream>
+#include <sstream>
 using namespace std;
 #define PR(X) cout<< #X <<" = "<<X<<endl;
 #define DBG 1
-
-map<string, string> idregassign;
-
 map<string, bool> idDef;
-string datasec = "";
-string codesec = "";
+string datasec = ".DATA \n";
+stringstream codesec;
 void stmt_list()
 {
     /*
@@ -21,6 +19,8 @@ void stmt_list()
         stmt();
 		//setLookaheadfalse();
     }
+	cout << datasec << endl;
+	cout << codesec.str() << endl;
 }
 
 void stmt()
@@ -34,12 +34,19 @@ void stmt()
 
     if (match(ID))
     {
-		string idname(yytext, yytext + yyleng);
-	//	idassignmap[idname] = 
+		string idname = getCurrentToken();
+
+		if (idDef[idname] == false){
+			datasec += idname + " DD 0\n";
+			idDef[idname] = true;
+		}
         advance();
         if(match(ASSIGN)){
             advance();
-            expr();
+			string tempreg = expr();
+			//codesec << idname << "=" << tempreg << endl;
+			codesec << "mov " << idname << "," << tempreg << endl;
+			freereg(tempreg);
             if(!match(SEMI)){
                 fprintf(stderr, "Missing Semicolon at line no. %d\n",yylineno);
 			}
@@ -90,13 +97,7 @@ void stmt()
 			}
 			stmt();
 		}
-        //stmt_list();
-
-        /*if(match(END)){
-            advance();
-        }else{
-            fprintf(stderr, " Missing END at line no %d\n",yylineno);
-        }*/
+        
     }
     else 
     {
@@ -124,7 +125,8 @@ string expr()
         advance();
         tempvar2=  equality();
 		string regNew = newreg();
-		cout << regNew << "= comparision " << tempvar1 << "==" << tempvar2 << endl;
+		codesec << regNew << "= comparision " << tempvar1 << "==" << tempvar2 << endl;
+		
 		freereg(tempvar1);
 		freereg(tempvar2);
 		tempvar1 = regNew;
@@ -150,10 +152,10 @@ string equality()
         tempvar2 = cmp();
 		string regNew = newreg();
 		if (less){
-			cout << regNew << " = result of " << tempvar1 << "<" << tempvar2 << endl;
+			codesec << regNew << " = result of " << tempvar1 << "<" << tempvar2 << endl;
 		}
 		else{
-			cout << regNew << " = result of " << tempvar1 << ">" << tempvar2 << endl;
+			codesec << regNew << " = result of " << tempvar1 << ">" << tempvar2 << endl;
 		}
 
 		less = match(LESS);
@@ -176,16 +178,18 @@ string cmp()
     while(plus || minus){
         advance();
         tempvar2 = term();
-		string regNew = newreg();
+		//string regNew = newreg();
 		if (plus){
-			cout << regNew << " =" << tempvar1 << "+" << tempvar2 << endl;
+			//codesec << regNew << " =" << tempvar1 << "+" << tempvar2 << endl;
+			codesec << "add " << tempvar1 << "," << tempvar2 << endl;
 		}
 		else{
-			cout << regNew << " =" << tempvar1 << "-" << tempvar2 << endl;
+			codesec << "sub " << tempvar1 << "," << tempvar2 << endl;
+			//codesec << regNew << " =" << tempvar1 << "-" << tempvar2 << endl;
 		}
-		freereg(tempvar1);
+		//freereg(tempvar1);
 		freereg(tempvar2);
-		tempvar1 = regNew;
+		//tempvar1 = regNew;
 
 		plus = match(PLUS); 
 		minus = match(MINUS);
@@ -210,16 +214,21 @@ string term()
     {
         advance();
         tempvar2 = factor();
-		string regNew = newreg();
+		//string regNew = newreg();
 		if (mul){
-			cout << regNew << " =" << tempvar1 << "*" << tempvar2 << endl;
+			//codesec << regNew << " =" << tempvar1 << "*" << tempvar2 << endl;
+			codesec << "mul " << tempvar1 << "," << tempvar2 << endl;
 		}
 		else{
-			cout << regNew << " =" << tempvar1 << "/" << tempvar2 << endl;
+			//codesec << regNew << " =" << tempvar1 << "/" << tempvar2 << endl;
+			codesec << "mov ax," << tempvar1 << endl;
+			codesec << "mov dx," << 0 << endl;
+			codesec << "div " << tempvar2 << endl;
+			codesec << "mov " << tempvar1 << "," << "ax" << endl;
 		}
-		freereg(tempvar1);
+		//freereg(tempvar1);
 		freereg(tempvar2);
-		tempvar1 = regNew;
+		//tempvar1 = regNew;
 
 		mul = match(MUL);
 		div = match(DIV);
@@ -248,10 +257,10 @@ string factor()
 	 */
 		if (match(NUM)){
 			string tok = getCurrentToken();
-			
 			string regi = newreg();
 			
-			cout << regi << " = " << tok << endl;
+			//codesec << regi << " = " << tok << endl;
+			codesec << "mov " << regi << "," << tok << endl;
 			advance();
 			return regi;
 		}
@@ -260,20 +269,19 @@ string factor()
 			string curId = getCurrentToken();
 
 			if (idDef.find(curId) == idDef.end()){
-				idDef[curId] = true;
 				// Add to datasec about curId declaration
+				datasec += curId+" DD 0 \n";
+
+				idDef[curId] = true;
+				
 			}
 
-			if (idregassign.find(curId) != idregassign.end()){
-				advance();
-				return idregassign[curId];
-			}
-			else{
-				string reg = newreg(curId);
-				idregassign[curId] = reg;
-				advance();
-				return reg;
-			}
+			string reg = newreg();
+			//codesec << reg << "=" << curId << endl;
+			codesec << "mov " << reg << "," << curId << endl;
+			advance();
+			return reg;
+			
 		}
 
     }

@@ -6,5 +6,5 @@
 #include <vector>
 using namespace std;
 
-string newreg(string curId = "");
+string newreg();
 void freereg(string);

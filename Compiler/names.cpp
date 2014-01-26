@@ -1,25 +1,25 @@
 #include "names.h"
+
 using namespace std;
 
 vector<string> registerNames = { "r1" , "r2", "r3" , "r4" , "r4" , "r5" , "r6" , "r7" , "r8" };
 map <string, bool> reginuse;
 map<string, string> regidassign;
+
 void initializeRegisterMap(){
 	for (int i = 0; i < registerNames.size(); i++)
 	{
 		reginuse[registerNames[i]] = false;
 	}
 }
-string newreg(string curId ){
+string newreg(){
 	string res;
 	for (int i = 0; i < registerNames.size(); i++)
 	{
 		if (reginuse[registerNames[i]] == false){
 			reginuse[registerNames[i]] = true;
 
-			if (curId != "")
-				regidassign[registerNames[i]] = curId;
-			return registerNames[i];
+		return registerNames[i];
 		}
 	}
 	
@@ -33,6 +33,7 @@ void freereg(string regName){
 	}
 	else{
 		reginuse[regName] = false;
-		regidassign[regName] = "";
 	}
 }
+
+

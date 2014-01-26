@@ -1,5 +1,9 @@
 a = 4;
-b = 3 + a;
+d = a*3;
+b = a/2;
 
 if a<5 then
-a=10;
+begin
+a=5+10;
+b = 0;
+end
