@@ -6,7 +6,7 @@ using namespace std;
 #define PR(X) cout<< #X <<" = "<<X<<endl;
 #define DBG 1
 map<string, bool> idDef;
-string datasec = "\n";
+string datasec = "org 100h\nJMP start\n";
 stringstream codesec;
 
 void stmt_list()
@@ -23,8 +23,8 @@ void stmt_list()
     }
 	if (!error)
 	{
-		cout << datasec << endl;
-		cout << codesec.str() << endl;
+		cout << datasec << "\nstart:" <<endl;
+		cout << codesec.str() << endl << "RET" << endl;
 	}
 }
 
