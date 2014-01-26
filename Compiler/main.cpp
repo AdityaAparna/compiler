@@ -6,6 +6,7 @@ bool error = false;
 
 int main ()
 {	
+	initializeRegisterMap();
 	stmt_list ();
 	return 0;
 }

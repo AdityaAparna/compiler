@@ -8,3 +8,5 @@ using namespace std;
 
 string newreg();
 void freereg(string);
+void initializeRegisterMap();
+string newreg();
