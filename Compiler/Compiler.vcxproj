@@ -81,6 +81,9 @@
     <None Include="testProgram.x" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="C:\Users\SHOBHIT\Desktop\test1.txt" />
+    <Text Include="C:\Users\SHOBHIT\Desktop\test2.txt" />
+    <Text Include="C:\Users\SHOBHIT\Desktop\test3.txt" />
     <Text Include="out.s" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

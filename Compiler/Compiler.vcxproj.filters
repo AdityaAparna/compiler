@@ -50,5 +50,8 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="out.s" />
+    <Text Include="C:\Users\SHOBHIT\Desktop\test1.txt" />
+    <Text Include="C:\Users\SHOBHIT\Desktop\test2.txt" />
+    <Text Include="C:\Users\SHOBHIT\Desktop\test3.txt" />
   </ItemGroup>
 </Project>

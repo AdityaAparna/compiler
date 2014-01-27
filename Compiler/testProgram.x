@@ -1,17 +1,13 @@
-a = 5
+sum = 20;
+n = 4;
 
-while a<2
+while n>0 do
 	begin
-		n = ((2+3)*5; 
+		while sum>0 do
+			begin
+				sum=n/2;
+				n=n-1;
+			end
+		if(sum>0) then
+			n=n-1;
 	end
-
-
-
-c 53;
-
-d = $27;
-
-
-if 3>2 
-	begin
-		b = 2
