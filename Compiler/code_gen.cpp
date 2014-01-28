@@ -138,10 +138,16 @@ string expr()
 	bool flag = true;
     tempvar1 = equality();
 
+
     while(match(EQ)){
-        advance();
+		codesec << "PUSH " << tempvar1 << endl;
+		advance();
+		freereg(tempvar1);
+
 		tempvar2 = equality();
 		//codesec << regNew << "= comparision " << tempvar1 << "==" << tempvar2 << endl;
+		tempvar1 = newreg();
+		codesec<<"POP "<<tempvar1<<endl;
 		codesec << "CMP " << tempvar1 << " , " << tempvar2 << endl;
 		if (flag)
 			codesec << "JNZ " << genLabel() << endl;
@@ -168,9 +174,12 @@ string equality()
 	int less = match(LESS);
 	int greater = match(GREATER);
     while(less || greater){
+		codesec << "PUSH " << tempvar1 << endl;
         advance();
+		freereg(tempvar1);
         tempvar2 = cmp();
-		
+		tempvar1 = newreg();
+		codesec<<"POP "<<tempvar1<<endl;
 		if (less){
 			//codesec << regNew << " = result of " << tempvar1 << "<" << tempvar2 << endl;
 			codesec << "CMP " << tempvar1 << " , " << tempvar2 << endl;
@@ -221,8 +230,12 @@ string cmp()
     tempvar1 = term();
 	int plus = match(PLUS); int minus = match(MINUS);
     while(plus || minus){
+		codesec << "PUSH " << tempvar1 << endl;
         advance();
+		freereg(tempvar1);
         tempvar2 = term();
+        tempvar1 = newreg();
+		codesec<<"POP "<<tempvar1<<endl;
 		//string regNew = newreg();
 		if (plus){
 			//codesec << regNew << " =" << tempvar1 << "+" << tempvar2 << endl;
@@ -257,10 +270,17 @@ string term()
 	int div = match(DIV);
     while( mul || div )
     {
+		codesec << "PUSH " << tempvar1 << endl;
         advance();
+		freereg(tempvar1);
         tempvar2 = factor();
+        tempvar1 = newreg();
+		codesec<<"POP "<<tempvar1<<endl;
 		if (mul){
-			codesec << "MUL " << tempvar1 << " , " << tempvar2 << endl;
+			codesec << "MOV ax , " << tempvar1 << endl;
+			codesec << "MOV dx , " << "0" << endl;
+			codesec << "MUL "<< tempvar2 << endl;
+			codesec << "MOV " << tempvar1 << " , " << "ax" << endl;
 		}
 		else{
 			codesec << "MOV ax , " << tempvar1 << endl;

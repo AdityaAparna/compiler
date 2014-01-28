@@ -132,7 +132,8 @@ int match(int token){
    /* Return true if "token" matches the
       current lookahead symbol.                */
 
- if(Lookahead == -1)
+
+	if(Lookahead == -1)
   Lookahead = lex();
 
 return token == Lookahead;

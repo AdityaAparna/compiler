@@ -28,6 +28,7 @@ string newreg(){
 	}
 	fprintf(stderr, "Expression too complex at line no.%d", yylineno);
 	error = true;
+	
 	exit(EXIT_FAILURE);
 }
 
