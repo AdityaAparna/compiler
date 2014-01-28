@@ -53,5 +53,7 @@
     <Text Include="testCase1.txt" />
     <Text Include="testCase2.txt" />
     <Text Include="testCase3.txt" />
+    <Text Include="testCase4.txt" />
+    <Text Include="grammar.txt" />
   </ItemGroup>
 </Project>

@@ -1,0 +1,22 @@
+stmt_list -> stmt stmt_list 
+			| epsilon
+stmt -> ID ASSIGN expr SEMI 
+			| IF expr THEN stmt_list 
+			| WHILE expr DO stmt_list 
+			| BEGIN stmt_list END 
+			| expr SEMI
+equality -> cmp equality'
+equality'-> LESS cmp equality' 
+			| GREATER cmp equality' 
+			| epsilon
+cmp -> term cmp'
+cmp'-> PLUS term cmp' 
+			| MINUS term cmp' 
+			| epsilon
+term -> factor term'
+term'-> MUL factor term' 
+			| DIV factor term' 
+			| epsilon
+factor -> NUM 
+			| ID 
+			| LP expr RP

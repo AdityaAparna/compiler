@@ -81,10 +81,12 @@
     <None Include="testProgram.x" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="grammar.txt" />
     <Text Include="out.s" />
     <Text Include="testCase1.txt" />
     <Text Include="testCase2.txt" />
     <Text Include="testCase3.txt" />
+    <Text Include="testCase4.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
