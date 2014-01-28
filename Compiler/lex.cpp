@@ -99,7 +99,7 @@ int lex(void){
 			}
           else
             return ASSIGN;
-        case '\n':
+		case '\n':
         case '\t':
         case ' ' :
           break;
@@ -107,7 +107,7 @@ int lex(void){
         default:
 			if (!isalnum(*current) && (*current) != '_')
 			{
-				fprintf(stderr, "Illegal character <%c> at line no.%d \n", *current, yyleng);
+				fprintf(stderr, "Illegal character <%c> at line no.%d \n", *current, yylineno);
 				error = true;
 			}
           else{
